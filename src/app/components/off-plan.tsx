@@ -96,7 +96,9 @@ function OffPlan() {
     planImage: string;
     projectName: string;
   } | null>(null);
+  const [isPlanVisible, setIsPlanVisible] = useState(false);
   const planViewerRef = useRef<HTMLDivElement>(null);
+  const isUpdatingPlan = useRef(false);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -119,12 +121,30 @@ function OffPlan() {
   // Click outside handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      // Check if the click is on a badge button
+      const closestButton = target.closest("button");
+      const isBadgeClick =
+        closestButton &&
+        closestButton.textContent &&
+        [
+          "Studio",
+          "1 Bedroom",
+          "2 Bedroom",
+          "3 Bedroom",
+          "4 Bedroom",
+          "5 Bedroom",
+        ].includes(closestButton.textContent.trim());
+
       if (
         selectedPlan &&
         planViewerRef.current &&
-        !planViewerRef.current.contains(event.target as Node)
+        !planViewerRef.current.contains(event.target as Node) &&
+        !isUpdatingPlan.current &&
+        !isBadgeClick
       ) {
-        setSelectedPlan(null);
+        closePlan();
       }
     };
 
@@ -140,16 +160,36 @@ function OffPlan() {
   const handleBadgeClick = (roomType: string, project: Project) => {
     const planImage = project.plans[roomType];
     if (planImage) {
-      setSelectedPlan({
+      isUpdatingPlan.current = true;
+
+      const newPlan = {
         roomType,
         planImage,
         projectName: project.name,
-      });
+      };
+
+      // If there's already a plan visible, update immediately without animation
+      if (selectedPlan && isPlanVisible) {
+        setSelectedPlan(newPlan);
+      } else {
+        // If no plan is visible, show with animation
+        setSelectedPlan(newPlan);
+        setTimeout(() => setIsPlanVisible(true), 10);
+      }
+
+      // Reset the flag after a short delay
+      setTimeout(() => {
+        isUpdatingPlan.current = false;
+      }, 100);
     }
   };
 
   const closePlan = () => {
-    setSelectedPlan(null);
+    setIsPlanVisible(false);
+    // Wait for animation to complete before removing from DOM
+    setTimeout(() => {
+      setSelectedPlan(null);
+    }, 300);
   };
 
   return (
@@ -167,7 +207,14 @@ function OffPlan() {
           {selectedPlan && (
             <div
               ref={planViewerRef}
-              className="absolute left-2 right-2 top-2 md:left-auto md:top-6 md:right-6 ring-2 ring-gray-100 z-30 bg-white rounded-lg shadow-lg overflow-hidden md:w-2/3"
+              className={`absolute left-2 right-2 top-2 md:left-auto md:top-6 md:right-6 ring-2 ring-gray-100 z-30 bg-white rounded-lg shadow-lg overflow-hidden md:w-2/3 
+                transition-all duration-300 ease-in-out transform
+                ${
+                  isPlanVisible
+                    ? "opacity-100 scale-100 translate-y-0"
+                    : "opacity-0 scale-95 -translate-y-2"
+                }
+              `}
             >
               <div className="flex justify-between items-center p-3 bg-gray-50 border-b">
                 <div className="text-sm font-medium text-gray-900">
@@ -177,7 +224,7 @@ function OffPlan() {
                   variant="ghost"
                   size="sm"
                   onClick={closePlan}
-                  className="h-6 w-6 p-0"
+                  className="h-6 w-6 p-0 hover:bg-gray-200 transition-colors duration-200"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -188,7 +235,7 @@ function OffPlan() {
                   alt={`${selectedPlan.projectName} ${selectedPlan.roomType} floor plan`}
                   width={1500}
                   height={843}
-                  className="w-full h-auto rounded"
+                  className="w-full h-auto rounded transition-opacity duration-300"
                 />
               </div>
             </div>
@@ -237,7 +284,15 @@ function OffPlan() {
                         <button
                           key={type}
                           onClick={() => handleBadgeClick(type, project)}
-                          className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-yellow/50 ring-inset hover:bg-gray-100 hover:ring-yellow transition-colors cursor-pointer"
+                          className={`inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-yellow/50 ring-inset hover:bg-gray-100 hover:ring-yellow transition-colors duration-300 cursor-pointer
+                            ${
+                              selectedPlan &&
+                              selectedPlan.projectName === project.name &&
+                              selectedPlan.roomType === type
+                                ? "!bg-yellow  !ring-white/50 text-black"
+                                : ""
+                            }
+                          `}
                         >
                           {type}
                         </button>

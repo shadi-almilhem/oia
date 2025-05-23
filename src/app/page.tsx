@@ -3,7 +3,7 @@ import NewListing from "./components/NewListing";
 import OffPlan from "./components/off-plan";
 export default function Home() {
   return (
-    <div className="bg-white flex flex-col gap-20 md:gap-40">
+    <div className="bg-white flex flex-col gap-20 ">
       <HeroSection />
       <NewListing />
       <OffPlan />

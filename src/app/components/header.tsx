@@ -11,16 +11,22 @@ function Header() {
   const lastScrollY = useRef(0);
 
   useEffect(() => {
+    let hideAt = 0; // Track the last scrollY where header was hidden
+    const UP_THRESHOLD = 200; // px to scroll up before showing header
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 50);
 
-      // More aggressive hiding - hide with smaller threshold and any downward scroll
       if (currentScrollY > lastScrollY.current && currentScrollY > 200) {
-        // Scrolling down - hide after 300px
+        // Scrolling down - hide header
         setShowHeader(false);
-      } else if (currentScrollY < lastScrollY.current) {
-        // Scrolling up - show header
+        hideAt = currentScrollY;
+      } else if (
+        currentScrollY < lastScrollY.current &&
+        hideAt - currentScrollY > UP_THRESHOLD
+      ) {
+        // Scrolling up by more than threshold - show header
         setShowHeader(true);
       }
       lastScrollY.current = currentScrollY;
@@ -42,32 +48,24 @@ function Header() {
       style={{ willChange: "transform" }}
     >
       <div
-        className={`mx-auto max-w-7xl px-4 sm:px-6 transition-all duration-500 lg:px-8 rounded-full ${
+        className={`mx-auto max-w-7xl px-4 sm:px-6 transition-all duration-500 lg:px-8 ${
           scrolled
-            ? "md:bg-slate-50/80 backdrop-blur-sm md:shadow-lg  "
+            ? "md:!bg-black/50  md:rounded-xl md:backdrop-blur-sm "
             : "bg-transparent"
         }`}
       >
         <div
-          className={`flex items-center justify-between transition-all duration-300  py-2 bg-black/30  rounded-lg backdrop-blur-md md:backdrop-blur-none md:bg-transparent `}
+          className={`flex items-center justify-between transition-all duration-300 px-4 md:px-0  py-3 bg-black/30  rounded-lg backdrop-blur-md md:backdrop-blur-none md:bg-transparent `}
         >
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <div className="w-20 rounded-full flex items-center justify-center">
               <Link href="/">
-                {scrolled ? (
-                  <img
-                    src="/assets/logo/oia_logo_black.svg"
-                    alt="Oia Properties"
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <img
-                    src="/assets/logo/oia_logo.svg"
-                    alt="Oia Properties"
-                    className="w-full h-full object-contain"
-                  />
-                )}
+                <img
+                  src="/assets/logo/oia_logo.svg"
+                  alt="Oia Properties"
+                  className="w-full h-full object-contain"
+                />
               </Link>
             </div>
           </div>
@@ -77,9 +75,7 @@ function Header() {
             <ul className="flex items-center gap-8 text-base">
               <li>
                 <a
-                  className={` ${
-                    scrolled ? "text-black" : "text-white"
-                  } font-medium transition hover:text-yellow `}
+                  className=" text-white hover:text-yellow font-medium transition"
                   href="#"
                 >
                   Buy
@@ -87,9 +83,7 @@ function Header() {
               </li>
               <li>
                 <a
-                  className={` ${
-                    scrolled ? "text-black" : "text-white"
-                  } transition hover:text-yellow font-medium`}
+                  className=" text-white hover:text-yellow font-medium transition"
                   href="#"
                 >
                   Rent
@@ -97,9 +91,7 @@ function Header() {
               </li>
               <li>
                 <a
-                  className={` ${
-                    scrolled ? "text-black" : "text-white"
-                  } transition hover:text-yellow font-medium`}
+                  className=" text-white hover:text-yellow font-medium transition"
                   href="#"
                 >
                   Sell
@@ -107,9 +99,7 @@ function Header() {
               </li>
               <li>
                 <a
-                  className={` ${
-                    scrolled ? "text-black" : "text-white"
-                  } transition hover:text-yellow font-medium`}
+                  className=" text-white hover:text-yellow font-medium transition"
                   href="#"
                 >
                   About
@@ -117,9 +107,7 @@ function Header() {
               </li>
               <li>
                 <a
-                  className={` ${
-                    scrolled ? "text-black" : "text-white"
-                  } transition hover:text-yellow font-medium`}
+                  className=" text-white hover:text-yellow font-medium transition"
                   href="#"
                 >
                   Developers
@@ -157,7 +145,7 @@ function Header() {
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isMenuOpen ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
-          } bg-black/95 backdrop-blur-md rounded-lg`}
+          } bg-black/80 backdrop-blur-md rounded-lg`}
         >
           <nav className="px-4 py-4">
             <ul className="flex flex-col space-y-4">

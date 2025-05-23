@@ -6,6 +6,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
+import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
@@ -79,12 +80,17 @@ const BackgroundCarousel = forwardRef<
           {images.map((image, index) => (
             <div
               key={index}
-              className="embla__slide flex-[0_0_100%] h-full bg-cover bg-center bg-no-repeat transition-opacity duration-500"
-              style={{
-                backgroundImage: `url('${image}')`,
-              }}
+              className="embla__slide flex-[0_0_100%] h-full relative"
             >
-              {/* Gradient overlay - pointer-events-none to allow clicks to pass through */}
+              <Image
+                src={image}
+                alt={`Background slide ${index + 1}`}
+                fill
+                sizes="100vw"
+                quality={90}
+                fetchPriority="high"
+                className="object-cover transition-opacity duration-500"
+              />
             </div>
           ))}
         </div>
