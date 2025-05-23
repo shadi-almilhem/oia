@@ -88,7 +88,7 @@ const HeroSection = () => {
               </div>
               <p className="text-xs text-gray-200">
                 Rated Best Over{" "}
-                <span className="font-semibold text-yellow-400">15.7k</span>{" "}
+                <span className="font-semibold text-yellow-400">200</span>{" "}
                 Reviews
               </p>
             </div>
