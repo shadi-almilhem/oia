@@ -140,7 +140,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
       </CardContent>
       <Separator className="w-full bg-yellow/20" />
-      <CardFooter className="flex flex-wrap !pl-0 !pt-0 items-start gap-2 sm:gap-4 self-stretch p-2 sm:p-4">
+      <CardFooter className="flex flex-wrap !pl-0 !pt-0 items-start gap-8 sm:gap-6 self-stretch p-2 sm:p-4">
         <div className="flex items-center gap-2">
           <MoveDiagonal className="w-3 h-3 sm:w-4 sm:h-4" />
           <p className="text-sm font-medium leading-5">{property.sqft}</p>

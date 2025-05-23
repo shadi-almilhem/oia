@@ -56,7 +56,7 @@ const HeroSection = () => {
           {/* Hero Text */}
           <div className="text-left max-w-4xl mb-12">
             <h1
-              className={`text-4xl ${instrumentSerif.className} md:text-5xl lg:text-6xl text-white leading-tight mb-6`}
+              className={`text-4xl text-pretty ${instrumentSerif.className} md:text-5xl lg:text-6xl text-white leading-tight mb-6`}
             >
               Find your comfortable home
               <br />
@@ -94,7 +94,7 @@ const HeroSection = () => {
             </div>
           </div>
 
-          <CardTitle className="md:text-2xl text-xl mb-4 font-normal text-white">
+          <CardTitle className="md:text-2xl text-xl mb-1 font-normal text-white">
             Let&apos;s Find Your Home
           </CardTitle>
           <Card className="w-full shadow-2xl border-0 ">
